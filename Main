@@ -1,1 +1,52 @@
 
+import asyncio
+import logging
+from aiogram import Bot, Dispatcher, F
+from aiogram.filters import Command
+from aiogram.types import Message
+
+# Настройка логгирования
+logging.basicConfig(level=logging.INFO)
+
+# Токен бота
+TOKEN = "8799140782:AAFiY_np5DBofZcFApWbxC0PfJ9ObzcRn7Q"
+
+# Создание экземпляра бота и диспетчера
+bot = Bot(token=TOKEN)
+dp = Dispatcher()
+
+# Обработчик команды /start
+@dp.message(F.text.startswith('/start'))
+async def start_command(message: Message):
+    await message.answer("Добро пожаловать в счётчик символов!")
+
+# Обработчик любых текстовых сообщений
+@dp.message(F.text)
+async def count_characters(message: Message):
+    """
+    Обработчик всех текстовых сообщений
+    Подсчитывает количество символов в тексте
+    """
+    if message.text:
+        # Подсчет символов
+        char_count = len(message.text)
+        char_count_no_spaces = len(message.text.replace(" ", ""))
+    
+        # Формирование ответа
+        response = (
+            f"📊 Статистика вашего сообщения:" "\n"
+            f"• Всего символов: {char_count}" "\n"
+            f"• Символов без пробелов: {char_count_no_spaces}" "\n"
+            f"• Количество слов: {len(message.text.split())}"
+        )
+    
+        await message.answer(response)
+    else:
+        await message.answer("Пожалуйста, отправьте текстовое сообщение! 📝")
+
+# Запуск бота
+async def main():
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
